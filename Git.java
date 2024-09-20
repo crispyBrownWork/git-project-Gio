@@ -1,30 +1,47 @@
 import java.io.File;
+import java.io.IOException;
 
 public class Git
 {
     
-    public static void main(String[] args) {
-        init("\\\\wsl.localhost\\Ubuntu-20.04\\home\\HTCS\\git-project-Gio");
+    public static void main(String[] args) throws IOException{
+        init();
     }
     
-    public static void init(String path){
+    public static void init() throws IOException{
         boolean exists = false;
-        File initFile = new File(path);
-        if(initFile.exists()){
-            exists = true;
-        }
+        //check if /git, /git/obects, /git/index exists -- this can be done using a helper method
+        //if so print already exists
 
-        initFile.mkdir("git");
-        File indexFile = new File("index");
+        //make both directories and file
+        //first check that they dont already exist
+        File gitDir = new File("\\git");
+        File objectsDir = new File("\\git\\objects");
+        File indexFile = new File("\\git\\index");
 
-        if(indexFile.exists()){
-            exists = true;
-        }
-
-        if(exists){
+        if(!repoExists(gitDir, objectsDir, indexFile))
+        {
             System.out.println("Git Repository already exists");
-        } else {
-            System.out.println("Created Repo: " + path);
+            return;
         }
+
+        
+        if(!gitDir.exists()) {
+            gitDir.mkdir();
+        }
+
+        
+        if(!objectsDir.exists()) {
+            objectsDir.mkdir();
+        }
+
+        
+        if(!indexFile.exists()) {
+            indexFile.createNewFile();
+        }
+    }
+
+    private static boolean repoExists(File git, File objects, File index) {
+        return git.exists() && objects.exists() && index.exists();
     }
 }
