@@ -1,6 +1,7 @@
 import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.math.BigInteger;
 
 public class Git
 {
@@ -44,19 +45,28 @@ public class Git
     }
 
 
-    public static String createBlob(File readFile) throws FileNotFoundException, NoSuchAlgorithmException {
-        String filename = "";
-        String filedata = fileString(readFile);
-        MessageDigest md = MessageDigest.getInstance("SHA1");
-
+    public static String createBlob(File readFile) throws NoSuchAlgorithmException {
         //read data off readFile into filedata using FileReader
         //hash filedata into filename as SHA-1
+        String filedata = fileString(readFile);
+        String filename = hashedString(filedata);
+
+        try {
+            FileWriter writer = new FileWriter("git\\index");
+            writer.write(filename + " " + readFile.getName());
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
 
         return filename;
     }
-    public static String fileString(File readFile) {
+    //read data off readFile into filedata using FileReader
+    private static String fileString(File readFile) {
         String filedata = "";
-        try{
+        try {
             FileReader reader = new FileReader(readFile);
             int data;
             while((data = reader.read()) != -1) {
@@ -71,5 +81,12 @@ public class Git
             e.printStackTrace();
         }
         return filedata;
+    }
+    //hash filedata into filename as SHA-1
+    private static String hashedString(String filedata) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA1");
+        byte[] digest = md.digest(filedata.getBytes());
+        BigInteger bigInt = new BigInteger(1, digest);
+        return bigInt.toString(16);
     }
 }
