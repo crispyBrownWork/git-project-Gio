@@ -8,7 +8,9 @@ public class Git
     
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException{
         init();
-        createBlob(new File("balls.txt"));
+        createBlob(new File("professionalTestFile.txt"));
+        createBlob(new File("professionalTestFile.txt"));
+        createBlob(new File("secondProfessionalTestFile.txt"));
     }
     
     //initializes \\git, \\git\\objects, \\git\\index directories and files in the working directory
@@ -45,23 +47,34 @@ public class Git
     }
 
 
-    public static String createBlob(File readFile) throws NoSuchAlgorithmException {
+    public static void createBlob(File readFile) throws NoSuchAlgorithmException {
         //read data off readFile into filedata using FileReader
         //hash filedata into filename as SHA-1
         String filedata = fileString(readFile);
         String filename = hashedString(filedata);
 
-        try {
-            FileWriter writer = new FileWriter("git\\index");
-            writer.write(filename + " " + readFile.getName());
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        //make a copy of the file into the objects folder with filename as the name
+        File blob = new File("git\\objects\\" + filename);
+        if(!blob.exists()) {
+            try {
+                blob.createNewFile();
+                FileWriter objectsWriter = new FileWriter("git\\objects\\" + filename);
+                objectsWriter.write(filedata);
+                objectsWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
 
-
-        return filename;
+        //insert a new line entry into the index file using FileWriter
+        try {
+            FileWriter indexWriter = new FileWriter("git\\index", true);
+            indexWriter.append("\n" + filename + " " + readFile.getName());
+            indexWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     //read data off readFile into filedata using FileReader
     private static String fileString(File readFile) {
