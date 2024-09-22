@@ -1,11 +1,13 @@
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class Git
 {
     
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException, NoSuchAlgorithmException{
         init();
+        createBlob(new File("balls.txt"));
     }
     
     //initializes \\git, \\git\\objects, \\git\\index directories and files in the working directory
@@ -42,8 +44,32 @@ public class Git
     }
 
 
-    public static String blobString(String filePath){
+    public static String createBlob(File readFile) throws FileNotFoundException, NoSuchAlgorithmException {
         String filename = "";
+        String filedata = fileString(readFile);
+        MessageDigest md = MessageDigest.getInstance("SHA1");
+
+        //read data off readFile into filedata using FileReader
+        //hash filedata into filename as SHA-1
+
         return filename;
+    }
+    public static String fileString(File readFile) {
+        String filedata = "";
+        try{
+            FileReader reader = new FileReader(readFile);
+            int data;
+            while((data = reader.read()) != -1) {
+                filedata += (char) data;
+            }
+            System.out.println("Filedata: " + filedata);
+            reader.close();
+
+        } catch(FileNotFoundException e) {
+            e.printStackTrace();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        return filedata;
     }
 }
