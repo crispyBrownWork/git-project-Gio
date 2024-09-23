@@ -5,11 +5,20 @@ public class GitTester {
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
         //create test files and store them in a file array
         File firstFile = new File("firstFile.txt");
+        FileWriter firstWriter = new FileWriter(firstFile);
+        firstWriter.write("This is the data!");
+        firstWriter.close();
+        firstFile.createNewFile();
+
         File secondFile = new File("secondFile.txt");
+        FileWriter secondWriter = new FileWriter(secondFile);
+        secondWriter.write("This is the second data!");
+        secondWriter.close();
+        secondFile.createNewFile();
         File[] files = {firstFile, secondFile};
 
         //space for testing methods
-        deleteInit();
+        resetTestFiles(files);
     }
 
     //checks if directorties and files are created during init()
@@ -57,27 +66,12 @@ public class GitTester {
         File[] objectChildren = objectsDir.listFiles();
         String indexString = Git.fileString(indexFile);
 
-        if(file.exists()) {
-            System.out.println("File: " + file.getName() + " already exists.");
-            return;
-        } else {
-            //create file with data
-            file.createNewFile();
-            System.out.println("Created file: " + file.getName() + " in the working directory.");
-            FileWriter writer = new FileWriter(file);
-            writer.write("This is the data!");
-            writer.close();
-
-            //create blob given file
-            Git.createBlob(file);
-        }
+        Git.createBlob(file);
 
         //check if file exists in object directory
         for(File child : objectChildren) {
-            if (child.getName() == Git.hashedString(Git.fileString(file))) {
+            if (child.getName().equals(Git.hashedString(Git.fileString(file)))) {
                 System.out.println(file.getName() + " exists int the git\\objects directory.");
-            } else {
-                System.out.println(file.getName() + " doesn't exist in the git\\objects directory.");
             }
 
         //check if file is logged in index file
