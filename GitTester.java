@@ -9,7 +9,7 @@ public class GitTester {
         File[] files = {firstFile, secondFile};
 
         //space for testing methods
-        blobTester(firstFile);
+        deleteInit();
     }
 
     //checks if directorties and files are created during init()
