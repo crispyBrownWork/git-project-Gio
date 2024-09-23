@@ -7,10 +7,7 @@ public class Git
 {
     
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException{
-        init();
-        createBlob(new File("professionalTestFile.txt"));
-        createBlob(new File("professionalTestFile.txt"));
-        createBlob(new File("secondProfessionalTestFile.txt"));
+        
     }
     
     //initializes \\git, \\git\\objects, \\git\\index directories and files in the working directory
@@ -38,8 +35,6 @@ public class Git
         if(!indexFile.exists()) {
             indexFile.createNewFile();
         }
-
-        System.out.println("Created \\git, \\git\\objects,\\git\\index in working directory");
     }
 
     private static boolean repoExists(File git, File objects, File index) {
@@ -77,7 +72,7 @@ public class Git
         }
     }
     //read data off readFile into filedata using FileReader
-    private static String fileString(File readFile) {
+    public static String fileString(File readFile) {
         String filedata = "";
         try {
             FileReader reader = new FileReader(readFile);
@@ -85,7 +80,6 @@ public class Git
             while((data = reader.read()) != -1) {
                 filedata += (char) data;
             }
-            System.out.println("Filedata: " + filedata);
             reader.close();
 
         } catch(FileNotFoundException e) {
@@ -96,7 +90,7 @@ public class Git
         return filedata;
     }
     //hash filedata into filename as SHA-1
-    private static String hashedString(String filedata) throws NoSuchAlgorithmException {
+    public static String hashedString(String filedata) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA1");
         byte[] digest = md.digest(filedata.getBytes());
         BigInteger bigInt = new BigInteger(1, digest);
