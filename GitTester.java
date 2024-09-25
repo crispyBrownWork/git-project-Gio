@@ -60,13 +60,14 @@ public class GitTester {
     }
 
     //executes createBlob() on a given file and checks if the blob is saved correctly inside git\\objects and git\\index
-    public static void blobTester(File file) throws IOException, NoSuchAlgorithmException {
+    public static void blobTester(File file, boolean doCompress) throws IOException, NoSuchAlgorithmException {
         File objectsDir = new File("git\\objects");
         File indexFile = new File("git\\index");
         File[] objectChildren = objectsDir.listFiles();
         String indexString = Git.fileString(indexFile);
 
-        Git.createBlob(file);
+        //run createBlob on given file
+        Git.createBlob(file, doCompress);
 
         //check if file exists in object directory
         for(File child : objectChildren) {
