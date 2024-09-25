@@ -2,6 +2,7 @@ import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.zip.DeflaterOutputStream;
+import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipOutputStream;
 import java.math.BigInteger;
 
@@ -43,7 +44,6 @@ public class Git
         return git.exists() && objects.exists() && index.exists();
     }
 
-
     public static void createBlob(File readFile, boolean doCompress) throws NoSuchAlgorithmException {
         //read data off readFile into filedata using FileReader
         //hash filedata into filename as SHA-1
@@ -77,6 +77,7 @@ public class Git
             e.printStackTrace();
         }
     }
+
     //read data off readFile into filedata using FileReader
     public static String fileString(File readFile) {
         String filedata = "";
@@ -95,6 +96,7 @@ public class Git
         }
         return filedata;
     }
+
     //hash filedata into filename as SHA-1
     public static String hashedString(String filedata) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA1");
@@ -102,9 +104,11 @@ public class Git
         BigInteger bigInt = new BigInteger(1, digest);
         return bigInt.toString(16);
     }
+
+    //compress inputString using GZIPOutputStream and return as a String
     private static String compressedHash(String inputString) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        DeflaterOutputStream zip = new DeflaterOutputStream(out);
+        GZIPOutputStream zip = new GZIPOutputStream(out);
         zip.write(inputString.getBytes());
         zip.close();
         return out.toString();

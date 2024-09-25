@@ -19,6 +19,8 @@ public class GitTester {
 
         //space for testing methods
         resetTestFiles(files);
+        resetDirectories();
+        deleteInit();
     }
 
     //checks if directorties and files are created during init()
