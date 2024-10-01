@@ -24,7 +24,7 @@ public class GitTester {
 
         // reset test files and directories
         // resetTestFiles(files);
-        // resetDirectories();
+        // resetDirectories();;
     }
 
     public static void initTest() throws IOException {
