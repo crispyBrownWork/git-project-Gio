@@ -24,7 +24,7 @@ public class GitTester {
 
         // reset test files and directories
         // resetTestFiles(files);
-        // resetDirectories();;
+        // resetDirectories();
     }
 
     public static void initTest() throws IOException {
@@ -32,6 +32,7 @@ public class GitTester {
         File gitDir = new File("git");
         File objectsDir = new File("git" + File.separator + "objects");
         File indexFile = new File("git" + File.separator + "index");
+        File headFile = new File("git" + File.separator + "HEAD");
         if (gitDir.exists()) {
             System.out.println("Created \\git in working directory");
         }
@@ -40,6 +41,9 @@ public class GitTester {
         }
         if (indexFile.exists()) {
             System.out.println("Created \\git\\index in working directory");
+        }
+        if (headFile.exists()) {
+            System.out.println("Created \\git\\HEAD in working directory");
         }
     }
 

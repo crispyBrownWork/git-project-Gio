@@ -15,8 +15,9 @@ public class Git {
         File gitDir = new File("git");
         File objectsDir = new File("git" + File.separator + "objects");
         File indexFile = new File("git" + File.separator + "index");
+        File headFile = new File("git" + File.separator + "HEAD");
 
-        if (repoExists(gitDir, objectsDir, indexFile)) {
+        if (repoExists(gitDir, objectsDir, indexFile, headFile)) {
             System.out.println("Git Repository already exists");
             return;
         }
@@ -30,10 +31,13 @@ public class Git {
         if (!indexFile.exists()) {
             indexFile.createNewFile();
         }
+        if (!headFile.exists()) {
+            headFile.createNewFile();
+        }
     }
 
-    private static boolean repoExists(File git, File objects, File index) {
-        return git.exists() && objects.exists() && index.exists();
+    private static boolean repoExists(File git, File objects, File index, File head) {
+        return git.exists() && objects.exists() && index.exists() && head.exists();
     }
 
     // Creates a blob from a file and records its hash in the index
@@ -82,6 +86,8 @@ public class Git {
                 treeContent.append(fileHash).append(" blob ").append(file.getName()).append("\n");
             }
         }
+
+        
 
         String treeHash = hashedString(treeContent.toString());
         File treeFile = new File("git" + File.separator + "objects" + File.separator + treeHash);
