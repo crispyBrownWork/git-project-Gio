@@ -4,13 +4,13 @@ import java.security.NoSuchAlgorithmException;
 public class GitTester {
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
         // create test files and store them in a file array
-        File firstFile = new File("firstFile.txt");
+        File firstFile = new File("workingDirectory/firstFile.txt");
         try (FileWriter firstWriter = new FileWriter(firstFile)) {
             firstWriter.write("This is the data!");
         }
         firstFile.createNewFile();
 
-        File secondFile = new File("secondFile.txt");
+        File secondFile = new File("workingDirectory/secondFile.txt");
         try (FileWriter secondWriter = new FileWriter(secondFile)) {
             secondWriter.write("This is the second data!");
         }
@@ -18,11 +18,14 @@ public class GitTester {
         File[] files = { firstFile, secondFile };
 
         // test init() method
+
         initTest();
         blobTester(firstFile, false);
         treeTester();
+        Git.createSnapshot("workingDirectory");
 
         // reset test files and directories
+
         // resetTestFiles(files);
         // resetDirectories();
     }
@@ -78,7 +81,7 @@ public class GitTester {
     }
 
     public static void treeTester() throws NoSuchAlgorithmException {
-        Git.createTree(".");
+        Git.createTree("workingDirectory/testDirectory");
         System.out.println("Tree created successfully.");
     }
 
@@ -95,6 +98,8 @@ public class GitTester {
         try (FileWriter indexWriter = new FileWriter(indexFile)) {
             indexWriter.write("");
         }
+
+        System.out.println("Reset directories successfully");
     }
 
     public static void resetTestFiles(File[] files) {
@@ -103,5 +108,7 @@ public class GitTester {
                 f.delete();
             }
         }
+
+        System.out.println("Reset test files successfully");
     }
 }

@@ -3,6 +3,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.zip.GZIPOutputStream;
 import java.math.BigInteger;
+import java.time.LocalDate;
 
 public class Git {
 
@@ -69,7 +70,7 @@ public class Git {
         }
     }
 
-    public static void createTree(String directoryPath) throws NoSuchAlgorithmException {
+    public static String createTree(String directoryPath) throws NoSuchAlgorithmException {
         File directory = new File(directoryPath);
         File[] files = directory.listFiles();
 
@@ -87,8 +88,6 @@ public class Git {
             }
         }
 
-        
-
         String treeHash = hashedString(treeContent.toString());
         File treeFile = new File("git" + File.separator + "objects" + File.separator + treeHash);
         try (FileWriter writer = new FileWriter(treeFile)) {
@@ -101,6 +100,43 @@ public class Git {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return treeHash;
+    }
+
+    public static void createSnapshot(String workingDirectory) throws NoSuchAlgorithmException {
+        createTree(workingDirectory);
+    }
+
+    public static void stageAdditions(String workingDirectory) {
+        File directory = new File(workingDirectory);
+        File[] files = directory.listFiles();
+        StringBuilder indexContent = new StringBuilder();
+
+        for(File child: files) {
+            if(child.isDirectory()) {
+                stageAdditions(child.getPath());
+            } else {
+
+            }
+        }
+    }
+
+    public static void createCommit(String workingDirectory, String author, String Method) {
+        File workingFile = new File(workingDirectory);
+        File objectsDirectory = new File(workingDirectory + "/objects");
+        LocalDate time = LocalDate.now();
+
+        File[] objects = objectsDirectory.listFiles();
+        for(File object : objects) {
+            
+        }
+
+        StringBuilder commitContent = new StringBuilder();
+        commitContent.append("tree: " + "\n");
+        commitContent.append("author: " + author + "\n");
+        commitContent.append("date: " + time + "\n");
+        commitContent.append("message: ");
     }
 
     // Reads data off a file into a string
