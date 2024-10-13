@@ -61,6 +61,9 @@ public class Git implements GitInterface {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else {
+            blob.delete();
+            return;
         }
 
         // Insert a new line entry into the index file
@@ -79,18 +82,23 @@ public class Git implements GitInterface {
 
         for (File file : files) {
             if (file.isDirectory()) {
-                createTree(file.getPath());
-                String dirHash = hashedString(file.getName());
+                String dirHash = createTree(file.getPath());
                 treeContent.append(dirHash).append(" tree ").append(file.getName()).append("\n");
             } else {
-                createBlob(file, false);
                 String fileHash = hashedString(fileString(file));
+                createBlob(file, false);
                 treeContent.append(fileHash).append(" blob ").append(file.getName()).append("\n");
             }
         }
 
+
         String treeHash = hashedString(treeContent.toString());
         File treeFile = new File("git" + File.separator + "objects" + File.separator + treeHash);
+
+        if(treeFile.exists()) {
+            treeFile.delete();
+            return treeHash;
+        }
         try (FileWriter writer = new FileWriter(treeFile)) {
             writer.write(treeContent.toString());
         } catch (IOException e) {
@@ -110,20 +118,16 @@ public class Git implements GitInterface {
     }
 
     public void stage(String workingDirectory) {
-        File directory = new File(workingDirectory);
-        File[] files = directory.listFiles();
-        StringBuilder indexContent = new StringBuilder();
+        try (FileWriter indexWriter = new FileWriter("git" + File.separator + "index", false)) {
+            indexWriter.write("");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        for(File child: files) {
-            if(child.isDirectory()) {
-                stage(child.getPath());
-            } else {
-                try (FileWriter indexWriter = new FileWriter("git" + File.separator + "index", true)) {
-                    indexWriter.write(child.getName() + " blob " + child.getName() + "\n");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        try {
+            createSnapshot(workingDirectory);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
         }
     }
 

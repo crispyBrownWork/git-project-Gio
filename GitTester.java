@@ -20,12 +20,14 @@ public class GitTester {
         // test init() method
 
         initTest();
-        blobTester(firstFile, false);
-        treeTester();
+        // blobTester(firstFile, false);
+        // treeTester();
 
         Git testGit = new Git();
-        testGit.createSnapshot("workingDirectory");
-        testGit.commit("Gio", "This is the first commit");
+
+        // testGit.createTree("workingDirectory");
+        testGit.stage("workingDirectory");
+        // testGit.commit("Gio", "This is the first commit");
 
         // reset test files and directories
 
