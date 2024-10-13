@@ -22,7 +22,10 @@ public class GitTester {
         initTest();
         blobTester(firstFile, false);
         treeTester();
-        Git.createSnapshot("workingDirectory");
+
+        Git testGit = new Git();
+        testGit.createSnapshot("workingDirectory");
+        testGit.commit("Gio", "This is the first commit");
 
         // reset test files and directories
 

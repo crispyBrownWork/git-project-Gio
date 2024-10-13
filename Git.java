@@ -4,8 +4,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.zip.GZIPOutputStream;
 import java.math.BigInteger;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
-public class Git {
+public class Git implements GitInterface {
 
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
     }
@@ -104,39 +105,74 @@ public class Git {
         return treeHash;
     }
 
-    public static void createSnapshot(String workingDirectory) throws NoSuchAlgorithmException {
-        createTree(workingDirectory);
+    public static String createSnapshot(String workingDirectory) throws NoSuchAlgorithmException {
+        return createTree(workingDirectory);
     }
 
-    public static void stageAdditions(String workingDirectory) {
+    public void stage(String workingDirectory) {
         File directory = new File(workingDirectory);
         File[] files = directory.listFiles();
         StringBuilder indexContent = new StringBuilder();
 
         for(File child: files) {
             if(child.isDirectory()) {
-                stageAdditions(child.getPath());
+                stage(child.getPath());
             } else {
-
+                try (FileWriter indexWriter = new FileWriter("git" + File.separator + "index", true)) {
+                    indexWriter.write(child.getName() + " blob " + child.getName() + "\n");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
-    public static void createCommit(String workingDirectory, String author, String Method) {
+    public String commit(String author, String message) {
+        String workingDirectory = "workingDirectory";
         File workingFile = new File(workingDirectory);
         File objectsDirectory = new File(workingDirectory + "/objects");
-        LocalDate time = LocalDate.now();
-
-        File[] objects = objectsDirectory.listFiles();
-        for(File object : objects) {
-            
-        }
+        File headFile = new File("git/HEAD");
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy");
+        String time = LocalDate.now().format(timeFormatter);
+        String commitHash = "";
 
         StringBuilder commitContent = new StringBuilder();
-        commitContent.append("tree: " + "\n");
+        try {
+            commitContent.append("tree: " + createSnapshot("workingDirectory") + "\n");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        commitContent.append("parent: " + fileString(headFile) +  "\n");
         commitContent.append("author: " + author + "\n");
         commitContent.append("date: " + time + "\n");
-        commitContent.append("message: ");
+        commitContent.append("message: " + message);
+
+        try {
+            commitHash = hashedString(commitContent.toString());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        try (FileWriter headWriter = new FileWriter(headFile)) {
+            headWriter.write(hashedString(commitContent.toString()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        
+        File commitFile = new File("git/objects/" + commitHash);
+        try (FileWriter commitWriter = new FileWriter(commitFile)) {
+            if (!commitFile.exists()) {
+                commitFile.createNewFile();
+            }
+            commitWriter.write(commitContent.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return commitHash;
     }
 
     // Reads data off a file into a string
