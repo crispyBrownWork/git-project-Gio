@@ -26,13 +26,13 @@ public class GitTester {
         Git testGit = new Git();
 
         // testGit.createTree("workingDirectory");
-        // testGit.stage("workingDirectory");
+        testGit.stage("workingDirectory");
         testGit.commit("Gio", "This is the first commit");
 
         // reset test files and directories
 
-        resetTestFiles(files);
-        resetDirectories();
+        // resetTestFiles(files);
+        // resetDirectories();
     }
 
     public static void initTest() throws IOException {

@@ -61,9 +61,6 @@ public class Git implements GitInterface {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else {
-            blob.delete();
-            return;
         }
 
         // Insert a new line entry into the index file
@@ -95,10 +92,6 @@ public class Git implements GitInterface {
         String treeHash = hashedString(treeContent.toString());
         File treeFile = new File("git" + File.separator + "objects" + File.separator + treeHash);
 
-        if(treeFile.exists()) {
-            treeFile.delete();
-            return treeHash;
-        }
         try (FileWriter writer = new FileWriter(treeFile)) {
             writer.write(treeContent.toString());
         } catch (IOException e) {
@@ -119,17 +112,7 @@ public class Git implements GitInterface {
         return createTree(workingDirectory);
     }
 
-    /*
-     * create root tree
-     * delete all duplicate files
-     */
     public void stage(String workingDirectory) {
-        try (FileWriter indexWriter = new FileWriter("git" + File.separator + "index", false)) {
-            indexWriter.write("");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         try {
             createSnapshot(workingDirectory);
         } catch (NoSuchAlgorithmException e) {
@@ -139,8 +122,6 @@ public class Git implements GitInterface {
 
     public String commit(String author, String message) {
         String workingDirectory = "workingDirectory";
-        File workingFile = new File(workingDirectory);
-        File objectsDirectory = new File(workingDirectory + "/objects");
         File headFile = new File("git/HEAD");
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("MMM dd, yyyy");
         String time = LocalDate.now().format(timeFormatter);
@@ -178,6 +159,12 @@ public class Git implements GitInterface {
                 commitFile.createNewFile();
             }
             commitWriter.write(commitContent.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try (FileWriter indexWriter = new FileWriter("git" + File.separator + "index", false)) {
+            indexWriter.write("");
         } catch (IOException e) {
             e.printStackTrace();
         }
