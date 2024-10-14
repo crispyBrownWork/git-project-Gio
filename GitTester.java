@@ -20,14 +20,11 @@ public class GitTester {
         // test init() method
 
         initTest();
+
         // blobTester(firstFile, false);
         // treeTester();
 
-        Git testGit = new Git();
-
-        // testGit.createTree("workingDirectory");
-        testGit.stage("workingDirectory");
-        testGit.commit("Gio", "This is the first commit");
+        commitTest();
 
         // reset test files and directories
 
@@ -35,6 +32,24 @@ public class GitTester {
         // resetDirectories();
     }
 
+
+    public static void commitTest() throws IOException {
+        Git testGit = new Git();
+        File addedFile = new File("workingDirectory/addedFile.txt");
+        
+        addedFile.delete();
+
+        testGit.stage("workingDirectory");
+        testGit.commit("Gio", "This is the first commit");
+
+        addedFile.createNewFile();
+        try (FileWriter addedWriter = new FileWriter(addedFile)) {
+            addedWriter.write("This is the added data!");
+        }
+
+        testGit.stage("workingDirectory/addedFile.txt");
+        testGit.commit("Gio", "This is the second commit");
+    }
     public static void initTest() throws IOException {
         Git.init();
         File gitDir = new File("git");

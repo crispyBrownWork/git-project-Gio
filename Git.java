@@ -114,8 +114,14 @@ public class Git implements GitInterface {
 
 
     //create root tree without deleting 
-    public static String createSnapshot(String workingDirectory) throws NoSuchAlgorithmException {
-        return createTree(workingDirectory);
+    public static String createSnapshot(String directory) throws NoSuchAlgorithmException {
+        File directoryFile = new File(directory);
+        if(directoryFile.isDirectory()) {
+            return createTree(directory);
+        } else {
+            createBlob(directoryFile, false);
+            return hashedString(fileString(directoryFile));
+        }
     }
 
     public void stage(String workingDirectory) {
