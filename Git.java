@@ -113,10 +113,16 @@ public class Git implements GitInterface {
         return treeHash;
     }
 
+
+    //create root tree without deleting 
     public static String createSnapshot(String workingDirectory) throws NoSuchAlgorithmException {
         return createTree(workingDirectory);
     }
 
+    /*
+     * create root tree
+     * delete all duplicate files
+     */
     public void stage(String workingDirectory) {
         try (FileWriter indexWriter = new FileWriter("git" + File.separator + "index", false)) {
             indexWriter.write("");
