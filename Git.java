@@ -19,6 +19,12 @@ public class Git implements GitInterface {
         File indexFile = new File("git" + File.separator + "index");
         File headFile = new File("git" + File.separator + "HEAD");
 
+        try (FileWriter headWriter = new FileWriter(headFile)) {
+            headWriter.write("");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         if (repoExists(gitDir, objectsDir, indexFile, headFile)) {
             System.out.println("Git Repository already exists");
             return;
